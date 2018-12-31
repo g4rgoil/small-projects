@@ -558,6 +558,7 @@ void read_input(string &input_string)
 
 int main(int argc, char *argv[])
 {
+    std::cout << "Type \"hep\" for information on the available commands." << std::endl;
     for (bool quit = false; !quit;) {
         string input;
         read_input(input);
