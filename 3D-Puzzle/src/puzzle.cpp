@@ -109,8 +109,8 @@ LevelStackEntry::LevelStackEntry(int _id, string &_name, const Level &_level) :
 
 
 LevelStack::LevelStack() noexcept :
-    next_id(0),
-    vector(std::vector<LevelStackEntry>())
+        next_id(0),
+        vector(std::vector<LevelStackEntry>())
 { }
 
 
@@ -226,7 +226,7 @@ void parse_level_side(LevelSide &level_side, const Mode mode)
     }
 
 
-    for  (u_long y = 0; y < level_side.height; ++y) {
+    for (u_long y = 0; y < level_side.height; ++y) {
         for (u_long x = 0; x < level_side.width; ++x) {
             level_side.assign(x, level_side.height - y - 1, parse_char(lines[y][x], mode));
         }

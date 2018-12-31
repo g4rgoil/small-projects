@@ -2,11 +2,11 @@
 // Created by pascal on 30.12.18.
 //
 
-#include <iostream>
-#include <math.h>
 #include <cstring>
-#include <stdio.h>
+#include <iostream>
 #include <assert.h>
+#include <math.h>
+#include <stdio.h>
 #include "../include/print.hpp"
 
 
@@ -121,7 +121,8 @@ void print(const LevelStack &stack)
 }
 
 
-void center(const char *str, u_int width, char *buffer, u_int buffer_len) {
+void center(const char *str, u_int width, char *buffer, u_int buffer_len)
+{
     u_int len = std::max(width, (u_int) strlen(str));
 
     auto left = (u_int) std::floor((len - strlen(str)) / 2.f);
@@ -143,7 +144,7 @@ void print_line(const Solution &solution, u_long y)
         std::cout << "   ";
     }
 
-    std::cout << std::endl;
+    std::cout << "y=" << y << std::endl;
 }
 
 
