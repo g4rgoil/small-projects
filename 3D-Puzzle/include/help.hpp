@@ -39,6 +39,10 @@ const char *HELP_SET =
         "Query the user for a new level and replace the currently active on with it.\n"
         "Allows the user to specify, whether the level should be created in normal or in\n"
         "picross mode. The command will default to normal mode, if neither is specified.\n\n"
+        "There are the following restrictions on the dimensions on the dimensions of a level:\n"
+        "  - The size of every dimension must be at least 1"
+        "  - The height of the left and right side must be equal"
+        "  - Both sides must be rectangles"
         "usage: set [(normal | picross)]\n";
 
 

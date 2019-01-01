@@ -157,16 +157,16 @@ int parse_stack_index(const std::vector<string> &params)
 bool is_valid_level_line(const string &line, const Mode mode)
 {
     if (mode == normal) {
-        return std::regex_match(line, std::regex("[\\s\\-xX#]+"));
+        return std::regex_match(line, std::regex(R"([\s\-'xX#]+)"));
     } else if (mode == picross) {
-        return std::regex_match(line, std::regex("[\\s\\-0-9]+"));
+        return std::regex_match(line, std::regex(R"([\s\-'0-9]+)"));
     }
 
     return false;
 }
 
 
-void read_line_array(std::vector<string> &lines, u_long *width, const Mode mode)
+bool read_line_array(std::vector<string> &lines, u_long *width, const Mode mode)
 {
     *width = ULONG_MAX;
     string line;
@@ -174,6 +174,11 @@ void read_line_array(std::vector<string> &lines, u_long *width, const Mode mode)
 
     while (std::getline(std::cin, line)) {
         if (!line.empty()) {
+            if (line.find('q') < line.length()) {
+                std::cout << "Aborting..." << std::endl;
+                return false;
+            }
+
             if (*width == ULONG_MAX) {
                 *width = (int) line.length();
             } else if (*width != (int) line.length()) {
@@ -194,8 +199,10 @@ void read_line_array(std::vector<string> &lines, u_long *width, const Mode mode)
 
     if (*width == ULONG_MAX) {
         std::cout << "The level side is smaller than the minimum of 1x1. Please enter the side again." << std::endl;
-        read_line_array(lines, width, mode);
+        return read_line_array(lines, width, mode);
     }
+
+    return true;
 }
 
 
@@ -205,19 +212,22 @@ int parse_char(char c, const Mode mode)
     if (mode == normal) {
         return (c == 'x' || c == 'X' || c == '#') ? 1 : 0;
     } else if (mode == picross) {
-        return (c == ' ' || c == '-') ? 0 : c - '0';
+        return (c == ' ' || c == '-' || c == '\'') ? 0 : c - '0';
     }
 
     return 0;
 }
 
 
-void parse_level_side(LevelSide &level_side, const Mode mode)
+bool parse_level_side(LevelSide &level_side, const Mode mode)
 {
     std::vector<string> lines;
-    read_line_array(lines, &level_side.width, mode);
-    level_side.height = (int) lines.size();
 
+    if (!read_line_array(lines, &level_side.width, mode)) {
+        return false;
+    };
+
+    level_side.height = (int) lines.size();
     level_side.vector.clear();
     level_side.vector.resize((u_long) level_side.height);
 
@@ -228,9 +238,12 @@ void parse_level_side(LevelSide &level_side, const Mode mode)
 
     for (u_long y = 0; y < level_side.height; ++y) {
         for (u_long x = 0; x < level_side.width; ++x) {
-            level_side.assign(x, level_side.height - y - 1, parse_char(lines[y][x], mode));
+            int value = parse_char(lines[y][x], mode);
+            level_side.assign(x, level_side.height - y - 1, value);
         }
     }
+
+    return true;
 }
 
 
@@ -253,7 +266,7 @@ void parse_parameters(string &command, std::vector<string> &parameter_vector)
 
 void handle_quit(string &)
 {
-    std::cout << "Exiting." << std::endl;
+    std::cout << "Exiting..." << std::endl;
 }
 
 
@@ -270,7 +283,7 @@ void handle_help(string &command)
         if (help_map.find(params[0]) != help_map.end()) {
             std::cout << help_map.at(params[0]) << std::endl;
         } else {
-            std::cout << "Invalid parameter for command \"help\"." << std::endl << std::endl << MAIN_HELP << std::endl;
+            std::cout << R"(Invalid parameter for command "help".)" << std::endl << std::endl << MAIN_HELP << std::endl;
         }
     }
 }
@@ -285,15 +298,22 @@ void handle_set(string &command)
     LevelSide left_side, right_side;
 
     do {
-        std::cout << "Please enter the left side of the level you want to solve. "
-                  << "Once you're done, press <ENTER> twice." << std::endl;
-        parse_level_side(left_side, mode);
+        std::cout << "Please enter the left side of the level you want to solve." << std::endl
+                  << R"(Use a " ", "'" or "-" for a box that isn't filled and an "x" or "#" for one that is.)"
+                  << std::endl << "Once you're done, press <ENTER> twice. Enter \"q\" and press <Enter> to abort."
+                  << std::endl;
+        if (!parse_level_side(left_side, mode)) {
+            return;
+        }
 
         std::cout << "Please enter the right side of the level you want to solve." << std::endl;
-        parse_level_side(right_side, mode);
+        if (!parse_level_side(right_side, mode)) {
+            return;
+        }
 
         if (left_side.height != right_side.height) {
-            std::cout << "Both sides of the level must have the same height." << std::endl;
+            std::cout << "Both sides of the level must have the same height, please try again."
+                      << std::endl << std::endl;
         }
 
     } while (left_side.height != right_side.height);

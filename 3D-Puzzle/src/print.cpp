@@ -136,15 +136,16 @@ void center(const char *str, u_int width, char *buffer, u_int buffer_len)
 
 void print_line(const Solution &solution, u_long y)
 {
+    u_long actual_y = solution.depth - y - 1;
     for (u_long z = 0; z < solution.height; ++z) {
         for (u_long x = 0; x < solution.width; ++x) {
-            std::cout << (solution.at(x, y, z) ? "X" : "'") << " ";
+            std::cout << (solution.at(x, actual_y, z) ? "X" : "'") << " ";
         }
 
         std::cout << "   ";
     }
 
-    std::cout << "y=" << y << std::endl;
+    std::cout << "y=" << actual_y << std::endl;
 }
 
 
