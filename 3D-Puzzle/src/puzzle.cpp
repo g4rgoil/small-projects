@@ -3,13 +3,10 @@
 //
 
 
-// TODO Add support for picross constraint > 9
-
-
 #include <iostream>
 #include <regex>
 #include <climits>
-#include <stdio.h>
+// #include <cstdio>
 #include <boost/algorithm/string.hpp>
 #include "../include/help.hpp"
 #include "../include/puzzle.hpp"
@@ -578,7 +575,7 @@ void read_input(string &input_string)
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Type \"hep\" for information on the available commands." << std::endl;
+    std::cout << "Type \"help\" for information on the available commands." << std::endl;
     for (bool quit = false; !quit;) {
         string input;
         read_input(input);

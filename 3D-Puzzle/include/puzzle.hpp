@@ -51,8 +51,8 @@ enum Mode
 
 struct LevelSide
 {
-    u_long width;   // = x
-    u_long height;  // = y
+    u_long width{};   // = x
+    u_long height{};  // = y
     level_vector vector;
 
     LevelSide();
