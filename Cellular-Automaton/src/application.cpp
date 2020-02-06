@@ -6,7 +6,7 @@ Application::Application(AbstractGame &_game) :
     window({WINDOW_WIDTH, WINDOW_HEIGHT}, "Cellular Automaton", sf::Style::Titlebar | sf::Style::Close),
     game(_game)
 {
-    window.setFramerateLimit(15);
+    window.setFramerateLimit(WINDOW_FRAMERATE);
 
     sf::View view({(float)game.sizeX() / 2, (float)game.sizeY() / 2}, {(float)game.sizeX(), (float)game.sizeY()});
     window.setView(view);
