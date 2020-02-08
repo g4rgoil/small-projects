@@ -16,16 +16,16 @@ Application::Application(AbstractGame *game) :
 int Application::mainloop()
 {
     sf::Image image;
-    image.create(game_->sizeX(), game_->sizeY(), sf::Color::White);
+    image.create(game_->getSize().x, game_->getSize().y, sf::Color::White);
 
     sf::Texture texture;
-    texture.create(game_->sizeX(), game_->sizeY());
+    texture.create(game_->getSize().x, game_->getSize().y);
     sf::RenderStates state(&texture);
 
     sf::VertexArray quad(sf::Quads, 4);
-    quad[0] = {{0.f, 0.f}, {0.f, (float)game_->sizeY()}};
-    quad[1] = {{WINDOW_WIDTH, 0.f}, {(float)game_->sizeX(), (float)game_->sizeY()}};
-    quad[2] = {{WINDOW_WIDTH, WINDOW_HEIGHT}, {(float)game_->sizeX(), 0.f}};
+    quad[0] = {{0.f, 0.f}, {0.f, (float)game_->getSize().y}};
+    quad[1] = {{WINDOW_WIDTH, 0.f}, {(float)game_->getSize().x, (float)game_->getSize().y}};
+    quad[2] = {{WINDOW_WIDTH, WINDOW_HEIGHT}, {(float)game_->getSize().x, 0.f}};
     quad[3] = {{0.f, WINDOW_HEIGHT}, {0.f, 0.f}};
 
     while (window_.isOpen()) {

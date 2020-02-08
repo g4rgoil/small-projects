@@ -22,28 +22,23 @@ void generateMatrix(ublas::matrix<T> &matrix, Generator gen)
 }
 
 Universe::Universe(size_t _size_x, size_t _size_y) :
-    size_x(_size_x), size_y(_size_y), cell_grid(_size_x, _size_y), neighbour_grid(_size_x, _size_y)
+    size_x(_size_x), size_y(_size_y), current_grid(_size_x, _size_y), alternate_grid(_size_x, _size_y)
 {
     std::default_random_engine random_engine;
     std::uniform_int_distribution<int> distribution(0, 1);
 
-    generateMatrix(cell_grid, [&](){return distribution(random_engine) ? State::alive : State::dead;});
-    fillMatrix(neighbour_grid, 0);
+    generateMatrix(current_grid, [&](){return distribution(random_engine) ? State::alive : State::dead;});
+    fillMatrix(alternate_grid, State::dead);
 }
 
-size_t Universe::sizeX() const
+sf::Vector2<size_t> Universe::getSize() const
 {
-    return size_x;
-}
-
-size_t Universe::sizeY() const
-{
-    return size_y;
+    return {size_x, size_y};
 }
 
 void Universe::makeImage(sf::Image &image) const
 {
-    for (auto itr = cell_grid.begin1(); itr != cell_grid.end1(); ++itr) {
+    for (auto itr = current_grid.begin1(); itr != current_grid.end1(); ++itr) {
         for (auto cell = itr.begin(); cell != itr.end(); ++cell) {
             image.setPixel(cell.index1(), cell.index2(), (*cell == State::alive) ? sf::Color::Black : sf::Color::White);
         }
@@ -52,46 +47,42 @@ void Universe::makeImage(sf::Image &image) const
 
 void Universe::nextGeneration()
 {
-    for (auto itr = cell_grid.begin1(); itr != cell_grid.end1(); ++itr) {
+    for (auto itr = alternate_grid.begin1(); itr != alternate_grid.end1(); ++itr) {
         for (auto cell = itr.begin(); cell != itr.end(); ++cell) {
-            if (*cell == State::alive) {
-                increaseNeighbourhood(cell.index1(), cell.index2());
-            }
+            int x = cell.index1(), y = cell.index2();
+            *cell = nextState(current_grid(x, y), countNeighbours(x, y));
         }
     }
 
-    auto [cell_itr, neighbour_itr] = std::tuple{cell_grid.begin1(), neighbour_grid.begin1()};
-    for (; cell_itr != cell_grid.end1(); ++cell_itr, ++neighbour_itr) {
-        auto [cell, neighbours] = std::tuple{cell_itr.begin(), neighbour_itr.begin()};
-        for (; cell != cell_itr.end(); ++cell, ++neighbours) {
-            *cell = nextCellState(*cell, *neighbours);
-            *neighbours = 0;
-        }
+    std::swap(current_grid, alternate_grid);
+}
+
+State Universe::nextState(State state, int neighbours)
+{
+    if (neighbours == 3) {
+        return State::alive;
+    } else if (neighbours == 2 && state == State::alive) {
+        return State::alive;
+    } else {
+        return State::dead;
     }
 }
 
-void Universe::increaseNeighbourhood(int x, int y)
+int Universe::countNeighbours(int x, int y) const
 {
+    int neighbours = 0;
+
     for (int dx = -1; dx <= 1; ++dx) {
         for (int dy = -1; dy <= 1; ++dy) {
             if (dx == 0 && dy == 0)
                 continue;
 
-            int xdx = x + dx, ydy = y + dy;
+            const int xdx = x + dx, ydy = y + dy;
             if (0 <= xdx && xdx < size_x && 0 <= ydy && ydy < size_y) {
-                neighbour_grid(xdx, ydy) += 1;
+                neighbours += current_grid(xdx, ydy);
             }
         }
     }
-}
 
-State Universe::nextCellState(State state, int neighbours)
-{
-    if (neighbours == 3) {
-        return State::alive;
-    } else if (state == State::alive && neighbours == 2) {
-        return State::alive;
-    } else {
-        return State::dead;
-    }
+    return neighbours;
 }
