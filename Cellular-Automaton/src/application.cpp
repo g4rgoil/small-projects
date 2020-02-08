@@ -15,29 +15,20 @@ Application::Application(AbstractGame *game) :
 
 int Application::mainloop()
 {
-    sf::Image image;
-    image.create(game_->getSize().x, game_->getSize().y, sf::Color::White);
-
-    sf::Texture texture;
-    texture.create(game_->getSize().x, game_->getSize().y);
-    sf::RenderStates state(&texture);
-
-    sf::VertexArray quad(sf::Quads, 4);
-    quad[0] = {{0.f, 0.f}, {0.f, (float)game_->getSize().y}};
-    quad[1] = {{WINDOW_WIDTH, 0.f}, {(float)game_->getSize().x, (float)game_->getSize().y}};
-    quad[2] = {{WINDOW_WIDTH, WINDOW_HEIGHT}, {(float)game_->getSize().x, 0.f}};
-    quad[3] = {{0.f, WINDOW_HEIGHT}, {0.f, 0.f}};
+    sf::VertexBuffer quad(sf::PrimitiveType::Quads);
+    sf::Vertex vertices[4] = {{{0.f, 0.f}, {0.f, (float)game_->getSize().y}},
+        {{WINDOW_WIDTH, 0.f}, {(float)game_->getSize().x, (float)game_->getSize().y}},
+        {{WINDOW_WIDTH, WINDOW_HEIGHT}, {(float)game_->getSize().x, 0.f}},
+        {{0.f, WINDOW_HEIGHT}, {0.f, 0.f}}};
+    quad.create(4);
+    quad.update(vertices);
 
     while (window_.isOpen()) {
         pollEvents();
 
-        game_->makeImage(image);
-
-        texture.update(image);
-
         window_.clear();
-        window_.draw(quad, state);
 
+        game_->draw(&window_, quad);
         if (show_hud_) {
             fps_counter_.draw(window_);
         }

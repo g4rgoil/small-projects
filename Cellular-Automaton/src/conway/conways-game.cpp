@@ -22,13 +22,17 @@ void generateMatrix(ublas::matrix<T> &matrix, Generator gen)
 }
 
 ConwaysGame::ConwaysGame(size_t _size_x, size_t _size_y) :
-    size_x(_size_x), size_y(_size_y), current_grid(_size_x, _size_y), alternate_grid(_size_x, _size_y)
+    size_x(_size_x), size_y(_size_y), current_grid(_size_x, _size_y),
+    alternate_grid(_size_x, _size_y), image_(), texture_(), state_(&texture_)
 {
     std::default_random_engine random_engine;
     std::uniform_int_distribution<int> distribution(0, 1);
 
     generateMatrix(current_grid, [&](){return distribution(random_engine) ? State::alive : State::dead;});
     fillMatrix(alternate_grid, State::dead);
+
+    image_.create(size_x, size_y, sf::Color::White);
+    texture_.create(size_x, size_y);
 }
 
 sf::Vector2<size_t> ConwaysGame::getSize() const
@@ -36,13 +40,24 @@ sf::Vector2<size_t> ConwaysGame::getSize() const
     return {size_x, size_y};
 }
 
-void ConwaysGame::makeImage(sf::Image &image) const
+void ConwaysGame::makeTexture(sf::Texture *texture) const
+{
+    // Assumes the texture has the correct size
+    texture->update(image_);
+}
+
+void ConwaysGame::makeImage(sf::Image *image) const
 {
     for (auto itr = current_grid.begin1(); itr != current_grid.end1(); ++itr) {
         for (auto cell = itr.begin(); cell != itr.end(); ++cell) {
-            image.setPixel(cell.index1(), cell.index2(), (*cell == State::alive) ? sf::Color::Black : sf::Color::White);
+            image->setPixel(cell.index1(), cell.index2(), (*cell == State::alive) ? sf::Color::Black : sf::Color::White);
         }
     }
+}
+
+void ConwaysGame::draw(sf::RenderTarget *target, const sf::Drawable &drawable) const
+{
+    target->draw(drawable, state_);
 }
 
 void ConwaysGame::nextGeneration()
@@ -55,6 +70,9 @@ void ConwaysGame::nextGeneration()
     }
 
     std::swap(current_grid, alternate_grid);
+
+    makeImage(&image_);
+    makeTexture(&texture_);
 }
 
 State ConwaysGame::nextState(State state, int neighbours)
