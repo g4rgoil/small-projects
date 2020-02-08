@@ -6,7 +6,9 @@ project(CellularAutomaton)
 
 set(EXECUTABLE_NAME "cellular-automaton")
 add_executable(${EXECUTABLE_NAME} src/application.hpp src/application.cpp src/abstract_game.hpp
-    src/conway/universe.hpp src/conway/universe.cpp)
+    src/fps_counter.hpp src/fps_counter.cpp src/conway/universe.hpp src/conway/universe.cpp)
+
+// FILE(COPY fonts DESTINATION "${CMAKE_BINARY_DIR}/fonts")
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
