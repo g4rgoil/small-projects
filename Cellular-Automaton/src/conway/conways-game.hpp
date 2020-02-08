@@ -9,10 +9,10 @@ using namespace boost::numeric;
 
 enum State {dead = 0, alive = 1};
 
-class Universe: public AbstractGame
+class ConwaysGame: public AbstractGame
 {
 public:
-    Universe(size_t dim_x, size_t dim_y);
+    ConwaysGame(size_t dim_x, size_t dim_y);
     virtual sf::Vector2<size_t> getSize() const;
     virtual void makeImage(sf::Image &image) const;
     virtual void nextGeneration();

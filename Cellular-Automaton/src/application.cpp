@@ -1,6 +1,6 @@
 #include "application.hpp"
 
-#include "conway/universe.hpp"
+#include "conway/conways-game.hpp"
 #include <iostream>
 
 Application::Application(AbstractGame *game) :
@@ -76,7 +76,7 @@ uint Application::updateFramerateLimit(int framerate)
 
 int main(int argc, char const *argv[])
 {
-    Universe game(GRID_DIM_X, GRID_DIM_Y);
+    ConwaysGame game(GRID_DIM_X, GRID_DIM_Y);
     Application application(&game);
 
     return application.mainloop();

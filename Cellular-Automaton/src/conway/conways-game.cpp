@@ -1,4 +1,4 @@
-#include "universe.hpp"
+#include "conways-game.hpp"
 
 #include <tuple>
 #include <random>
@@ -21,7 +21,7 @@ void generateMatrix(ublas::matrix<T> &matrix, Generator gen)
     }
 }
 
-Universe::Universe(size_t _size_x, size_t _size_y) :
+ConwaysGame::ConwaysGame(size_t _size_x, size_t _size_y) :
     size_x(_size_x), size_y(_size_y), current_grid(_size_x, _size_y), alternate_grid(_size_x, _size_y)
 {
     std::default_random_engine random_engine;
@@ -31,12 +31,12 @@ Universe::Universe(size_t _size_x, size_t _size_y) :
     fillMatrix(alternate_grid, State::dead);
 }
 
-sf::Vector2<size_t> Universe::getSize() const
+sf::Vector2<size_t> ConwaysGame::getSize() const
 {
     return {size_x, size_y};
 }
 
-void Universe::makeImage(sf::Image &image) const
+void ConwaysGame::makeImage(sf::Image &image) const
 {
     for (auto itr = current_grid.begin1(); itr != current_grid.end1(); ++itr) {
         for (auto cell = itr.begin(); cell != itr.end(); ++cell) {
@@ -45,7 +45,7 @@ void Universe::makeImage(sf::Image &image) const
     }
 }
 
-void Universe::nextGeneration()
+void ConwaysGame::nextGeneration()
 {
     for (auto itr = alternate_grid.begin1(); itr != alternate_grid.end1(); ++itr) {
         for (auto cell = itr.begin(); cell != itr.end(); ++cell) {
@@ -57,7 +57,7 @@ void Universe::nextGeneration()
     std::swap(current_grid, alternate_grid);
 }
 
-State Universe::nextState(State state, int neighbours)
+State ConwaysGame::nextState(State state, int neighbours)
 {
     if (neighbours == 3) {
         return State::alive;
@@ -68,7 +68,7 @@ State Universe::nextState(State state, int neighbours)
     }
 }
 
-int Universe::countNeighbours(int x, int y) const
+int ConwaysGame::countNeighbours(int x, int y) const
 {
     int neighbours = 0;
 
