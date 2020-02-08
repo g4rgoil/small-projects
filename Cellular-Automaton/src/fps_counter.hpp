@@ -13,6 +13,7 @@ public:
     void update();
     int currentFps() const;
     void draw(sf::RenderTarget &target) const;
+
 private:
     float current_fps_;
     sf::Clock clock_;

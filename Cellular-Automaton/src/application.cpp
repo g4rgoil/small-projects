@@ -20,6 +20,7 @@ int Application::mainloop()
 
     sf::Texture texture;
     texture.create(game_->sizeX(), game_->sizeY());
+    sf::RenderStates state(&texture);
 
     sf::VertexArray quad(sf::Quads, 4);
     quad[0] = {{0.f, 0.f}, {0.f, (float)game_->sizeY()}};
@@ -33,7 +34,6 @@ int Application::mainloop()
         game_->makeImage(image);
 
         texture.update(image);
-        sf::RenderStates state(&texture);
 
         window_.clear();
         window_.draw(quad, state);
