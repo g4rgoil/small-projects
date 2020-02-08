@@ -21,6 +21,8 @@ void generateMatrix(ublas::matrix<T> &matrix, Generator gen)
     }
 }
 
+using namespace conway;
+
 ConwaysGame::ConwaysGame(size_t _size_x, size_t _size_y) :
     size_x(_size_x), size_y(_size_y), current_grid(_size_x, _size_y),
     alternate_grid(_size_x, _size_y), image_(), texture_(), state_(&texture_)

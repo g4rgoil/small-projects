@@ -67,7 +67,7 @@ uint Application::updateFramerateLimit(int framerate)
 
 int main(int argc, char const *argv[])
 {
-    ConwaysGame game(GRID_DIM_X, GRID_DIM_Y);
+    conway::ConwaysGame game(GRID_DIM_X, GRID_DIM_Y);
     Application application(&game);
 
     return application.mainloop();

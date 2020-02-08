@@ -12,6 +12,8 @@
 
 using namespace boost::numeric;
 
+namespace conway {
+
 enum State {dead = 0, alive = 1};
 
 class ConwaysGame: public AbstractGame
@@ -38,5 +40,7 @@ private:
     void makeImage(sf::Image *image) const;
     void makeTexture(sf::Texture *texture) const;
 };
+
+}
 
 #endif  // CONWAY_CONWAYS_GAME_HPP_INCLUDED
