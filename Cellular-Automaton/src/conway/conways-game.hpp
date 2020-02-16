@@ -21,19 +21,19 @@ class ConwaysGame: public AbstractGame
 public:
     ConwaysGame(size_t dim_x, size_t dim_y);
     virtual sf::Vector2<size_t> getSize() const;
-    virtual void draw(sf::RenderTarget *target, const sf::Drawable &drawable) const;
+    virtual void draw(sf::RenderTarget *target, const sf::Drawable &drawable);
     virtual void nextGeneration();
 
 private:
     const size_t size_x;
     const size_t size_y;
+    bool is_dirty_;
 
     ublas::matrix<State> current_grid;
     ublas::matrix<State> alternate_grid;
 
     sf::Image image_;
     sf::Texture texture_;
-    sf::RenderStates state_;
 
     static State nextState(State state, int neighbours);
     int countNeighbours(int x, int y) const;

@@ -10,7 +10,7 @@ class AbstractGame
 {
 public:
     virtual sf::Vector2<size_t> getSize() const = 0;
-    virtual void draw(sf::RenderTarget *target, const sf::Drawable &drawable) const = 0;
+    virtual void draw(sf::RenderTarget *target, const sf::Drawable &drawable) = 0;
     virtual void nextGeneration() = 0;
 };
 

@@ -5,15 +5,24 @@ set (CMAKE_CXX_STANDARD 17)
 project(CellularAutomaton)
 
 set(EXECUTABLE_NAME "cellular-automaton")
-add_executable(${EXECUTABLE_NAME} src/application.hpp src/application.cpp src/abstract_game.hpp
-    src/fps_counter.hpp src/fps_counter.cpp src/conway/conways-game.hpp src/conway/conways-game.cpp)
+add_executable( ${EXECUTABLE_NAME} src/application.hpp src/application.cpp src/abstract_game.hpp
+    src/fps_counter.hpp src/fps_counter.cpp src/conway/conways-game.hpp src/conway/conways-game.cpp
+    src/conway-gpu/conways-game.hpp src/conway-gpu/conways-game.cpp )
 
 #  FILE(COPY fonts DESTINATION "${CMAKE_BINARY_DIR}/fonts")
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+set( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH} )
 
-find_package(SFML REQUIRED COMPONENTS graphics window system)
-set(SFML_STATIC_LIBRARIES TRUE)
+find_package( OpenGL REQUIRED )
+include_directories( ${OPENGL_INCLUDE_DIRS} )
+target_link_libraries( ${EXECUTABLE_NAME} ${OPENGL_LIBRARIES} )
 
-include_directories(${SFML_INCLUDE_DIR})
-target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+find_package( GLEW REQUIRED )
+include_directories( ${GLEW_INCLUDE_DIRS} )
+target_link_libraries( ${EXECUTABLE_NAME} ${GLEW_LIBRARIES} )
+
+find_package( SFML REQUIRED COMPONENTS graphics window system )
+set( SFML_STATIC_LIBRARIES TRUE )
+
+include_directories( ${SFML_INCLUDE_DIR} )
+target_link_libraries( ${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES} )

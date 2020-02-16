@@ -24,8 +24,8 @@ void generateMatrix(ublas::matrix<T> &matrix, Generator gen)
 using namespace conway;
 
 ConwaysGame::ConwaysGame(size_t _size_x, size_t _size_y) :
-    size_x(_size_x), size_y(_size_y), current_grid(_size_x, _size_y),
-    alternate_grid(_size_x, _size_y), image_(), texture_(), state_(&texture_)
+    size_x(_size_x), size_y(_size_y), is_dirty_(true), current_grid(_size_x, _size_y),
+    alternate_grid(_size_x, _size_y), image_(), texture_()
 {
     std::default_random_engine random_engine;
     std::uniform_int_distribution<int> distribution(0, 1);
@@ -57,9 +57,14 @@ void ConwaysGame::makeImage(sf::Image *image) const
     }
 }
 
-void ConwaysGame::draw(sf::RenderTarget *target, const sf::Drawable &drawable) const
+void ConwaysGame::draw(sf::RenderTarget *target, const sf::Drawable &drawable)
 {
-    target->draw(drawable, state_);
+    if (is_dirty_) {
+        makeImage(&image_);
+        makeTexture(&texture_);
+    }
+
+    target->draw(drawable, &texture_);
 }
 
 void ConwaysGame::nextGeneration()
@@ -72,9 +77,7 @@ void ConwaysGame::nextGeneration()
     }
 
     std::swap(current_grid, alternate_grid);
-
-    makeImage(&image_);
-    makeTexture(&texture_);
+    is_dirty_ = true;
 }
 
 State ConwaysGame::nextState(State state, int neighbours)

@@ -1,11 +1,15 @@
-#include "application.hpp"
+// #deI//fine GLEW_STATIC
 
-#include "conway/conways-game.hpp"
 #include <iostream>
+#include <GL/glew.h>
+#include <SFML/Graphics.hpp>
+#include "application.hpp"
+#include "conway/conways-game.hpp"
+#include "conway-gpu/conways-game.hpp"
 
-Application::Application(AbstractGame *game) :
-    window_({WINDOW_WIDTH, WINDOW_HEIGHT}, "Cellular Automaton", sf::Style::Titlebar | sf::Style::Close),
-    game_(game), fps_counter_(), framerate_limit_(WINDOW_FRAMERATE), show_hud_(true)
+Application::Application(sf::RenderWindow *window, AbstractGame *game) :
+    window_(window), game_(game), fps_counter_(),
+    framerate_limit_(WINDOW_FRAMERATE), show_hud_(true)
 {
     updateFramerateLimit(framerate_limit_);
 
@@ -23,17 +27,18 @@ int Application::mainloop()
     quad.create(4);
     quad.update(vertices);
 
-    while (window_.isOpen()) {
+    while (window_->isOpen()) {
         pollEvents();
 
-        window_.clear();
+        window_->resetGLStates();
+        window_->clear();
 
-        game_->draw(&window_, quad);
+        game_->draw(window_, quad);
         if (show_hud_) {
-            fps_counter_.draw(window_);
+            fps_counter_.draw(*window_);
         }
 
-        window_.display();
+        window_->display();
 
         game_->nextGeneration();
         fps_counter_.update();
@@ -45,9 +50,9 @@ int Application::mainloop()
 void Application::pollEvents()
 {
     sf::Event event;
-    while (window_.pollEvent(event)) {
+    while (window_->pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            window_.close();
+            window_->close();
         } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up) {
             framerate_limit_ = updateFramerateLimit(framerate_limit_ + 1);
         } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down) {
@@ -61,14 +66,18 @@ void Application::pollEvents()
 uint Application::updateFramerateLimit(int framerate)
 {
     framerate = std::max(1, framerate);
-    window_.setFramerateLimit(framerate);
+    window_->setFramerateLimit(framerate);
     return framerate;
 }
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
+    sf::RenderWindow window({WINDOW_WIDTH, WINDOW_HEIGHT}, "Cellular Automaton",
+                            sf::Style::Titlebar | sf::Style::Close);
+    glewInit();
     conway::ConwaysGame game(GRID_DIM_X, GRID_DIM_Y);
-    Application application(&game);
+    Application application(&window, &game);
+
 
     return application.mainloop();
 }
