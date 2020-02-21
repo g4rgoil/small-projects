@@ -1,7 +1,8 @@
 #ifndef APPLICATION_HPP_INCLUDED
 #define APPLICATION_HPP_INCLUDED
 
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <GLFW/glfw3.h>
+
 #include "abstract_game.hpp"
 #include "fps_counter.hpp"
 
@@ -12,18 +13,20 @@ const size_t GRID_DIM_X = 128, GRID_DIM_Y = 128;
 class Application
 {
 public:
-    Application(sf::RenderWindow *window, AbstractGame *game);
+    Application(GLFWwindow *window, AbstractGame *game);
     int mainloop();
 
 private:
-    sf::RenderWindow *window_;
+    GLFWwindow *window_;
     AbstractGame *game_;
     FpsCounter fps_counter_;
+    uint vertex_buffer_;
+    uint vertex_array_;
     uint framerate_limit_;
     bool show_hud_;
 
-    void pollEvents();
-    uint updateFramerateLimit(int framerate);
+    static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+    void key_callback(int key, int scancode, int action, int mods);
 };
 
 #endif  // APPLICATION_HPP_INCLUDED

@@ -1,83 +1,106 @@
-// #deI//fine GLEW_STATIC
-
 #include <iostream>
-#include <GL/glew.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <SFML/Graphics.hpp>
+
 #include "application.hpp"
 #include "conway/conways-game.hpp"
-#include "conway-gpu/conways-game.hpp"
+// #include "conway-gpu/conways-game.hpp"
 
-Application::Application(sf::RenderWindow *window, AbstractGame *game) :
-    window_(window), game_(game), fps_counter_(),
-    framerate_limit_(WINDOW_FRAMERATE), show_hud_(true)
+Application::Application(GLFWwindow *window, AbstractGame *game) :
+        window_(window), game_(game), fps_counter_(WINDOW_WIDTH, WINDOW_HEIGHT),
+        framerate_limit_(WINDOW_FRAMERATE), show_hud_(true)
 {
-    updateFramerateLimit(framerate_limit_);
+    glfwSetWindowUserPointer(window, this);
+    glfwSetKeyCallback(window, Application::key_callback);
 
-    // sf::View view({(float)WINDOW_WIDTH / 2, (float)WINDOW_HEIGHT / 2}, {(float)WINDOW_WIDTH, (float)WINDOW_HEIGHT});
-    // window_.setView(view);
+    float vertices[] = {
+        -1.0f,  1.0f, 0.0f, 1.0f,   // top left
+        -1.0f, -1.0f, 0.0f, 0.0f,   // bottom left
+         1.0f,  1.0f, 1.0f, 1.0f,   // top right
+
+         1.0f,  1.0f, 1.0f, 1.0f,   // top right
+        -1.0f, -1.0f, 0.0f, 0.0f,   // bottom left
+         1.0f, -1.0f, 1.0f, 0.0f,   // bottom right
+    };
+
+    glGenVertexArrays(1, &vertex_array_);
+    glGenBuffers(1, &vertex_buffer_);
+
+    glBindVertexArray(vertex_array_);
+    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 }
 
 int Application::mainloop()
 {
-    sf::VertexBuffer quad(sf::PrimitiveType::Quads);
-    sf::Vertex vertices[4] = {{{0.f, 0.f}, {0.f, (float)game_->getSize().y}},
-        {{WINDOW_WIDTH, 0.f}, {(float)game_->getSize().x, (float)game_->getSize().y}},
-        {{WINDOW_WIDTH, WINDOW_HEIGHT}, {(float)game_->getSize().x, 0.f}},
-        {{0.f, WINDOW_HEIGHT}, {0.f, 0.f}}};
-    quad.create(4);
-    quad.update(vertices);
+    while (!glfwWindowShouldClose(window_)) {
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    while (window_->isOpen()) {
-        pollEvents();
+        game_->draw(vertex_array_);
 
-        window_->resetGLStates();
-        window_->clear();
-
-        game_->draw(window_, quad);
         if (show_hud_) {
-            fps_counter_.draw(*window_);
+            fps_counter_.draw();
         }
-
-        window_->display();
 
         game_->nextGeneration();
         fps_counter_.update();
+
+        glfwSwapBuffers(window_);
+        glfwPollEvents();
     }
 
     return EXIT_SUCCESS;
 }
 
-void Application::pollEvents()
+void Application::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-    sf::Event event;
-    while (window_->pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-            window_->close();
-        } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Up) {
-            framerate_limit_ = updateFramerateLimit(framerate_limit_ + 1);
-        } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Down) {
-            framerate_limit_ = updateFramerateLimit(framerate_limit_ - 1);
-        } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::H) {
-            show_hud_ = !show_hud_;
-        }
+    ((Application*)glfwGetWindowUserPointer(window))->key_callback(key, scancode, action, mods);
+}
+
+void Application::key_callback(int key, int scancode, int action, int mods)
+{
+    if (key = GLFW_KEY_H && action == GLFW_PRESS) {
+        show_hud_ = !show_hud_;
     }
 }
 
-uint Application::updateFramerateLimit(int framerate)
+void error_callback(int error, const char *description)
 {
-    framerate = std::max(1, framerate);
-    window_->setFramerateLimit(framerate);
-    return framerate;
+    std::cout << description << std::endl;
 }
 
 int main(int argc, char *argv[])
 {
-    sf::RenderWindow window({WINDOW_WIDTH, WINDOW_HEIGHT}, "Cellular Automaton",
-                            sf::Style::Titlebar | sf::Style::Close);
-    glewInit();
+    if (!glfwInit()) {
+        std::cout << "GLFW initialisation failed" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Cellular Automaton", NULL, NULL);
+    if (!window) {
+        glfwTerminate();
+        return EXIT_FAILURE; 
+    }
+
+    glfwSetErrorCallback(error_callback);
+    glfwMakeContextCurrent(window);
+    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
+    // glfwSwapInterval(1);  // enable Vsync
+    glfwSwapInterval(0);
+
     conway::ConwaysGame game(GRID_DIM_X, GRID_DIM_Y);
-    Application application(&window, &game);
+    Application application(window, &game);
+    int exit_code = application.mainloop();
 
-
-    return application.mainloop();
+    glfwTerminate();
+    return exit_code;
 }

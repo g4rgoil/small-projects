@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "Cellular-Automaton/include",
+                "/usr/include/freetype2"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

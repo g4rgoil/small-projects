@@ -1,24 +1,26 @@
 #ifndef FPS_COUNTER_HPP_INCLUDED
 #define FPS_COUNTER_HPP_INCLUDED
 
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/System/Clock.hpp>
+#include <glm/glm.hpp>
 
 class FpsCounter 
 {
 public:
-    FpsCounter();
+    FpsCounter(uint window_width, uint window_height);
     void update();
     int currentFps() const;
-    void draw(sf::RenderTarget &target) const;
+    void draw() const;
 
 private:
-    float current_fps_;
-    sf::Clock clock_;
-    sf::Text text_;
-    sf::Font font_;
+    double current_fps_;
+    double last_update_time_;
+
+    uint window_width_;
+    uint window_height_;
+    uint shader_program_;
+    uint vertex_array_;
+    uint vertex_buffer_;
+
 };
 
 #endif  // FPS_COUNTER_HPP_INCLUDED

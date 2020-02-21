@@ -3,42 +3,38 @@
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
+
 #include "../abstract_game.hpp"
+
 
 using namespace boost::numeric;
 
 namespace conway {
 
-enum State {dead = 0, alive = 1};
+enum State : char {dead = 0, alive = 1};
 
 class ConwaysGame: public AbstractGame
 {
 public:
-    ConwaysGame(size_t dim_x, size_t dim_y);
-    virtual sf::Vector2<size_t> getSize() const;
-    virtual void draw(sf::RenderTarget *target, const sf::Drawable &drawable);
+    ConwaysGame(uint size_x, uint size_y);
+    virtual sf::Vector2u getSize() const;
+    virtual void draw(uint vertex_array);
     virtual void nextGeneration();
 
 private:
-    const size_t size_x;
-    const size_t size_y;
-    bool is_dirty_;
+    const uint size_x_;
+    const uint size_y_;
 
     ublas::matrix<State> current_grid;
     ublas::matrix<State> alternate_grid;
 
-    sf::Image image_;
-    sf::Texture texture_;
+    uint texture_;
+    uint shader_program_;
+    bool is_dirty_;
 
     static State nextState(State state, int neighbours);
     int countNeighbours(int x, int y) const;
-    void makeImage(sf::Image *image) const;
-    void makeTexture(sf::Texture *texture) const;
+    void writeToTexture(unsigned int texture);
 };
 
 }
