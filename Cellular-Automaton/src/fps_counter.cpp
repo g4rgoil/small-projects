@@ -157,6 +157,13 @@ FpsCounter::FpsCounter(uint window_width, uint window_height) :
     glBindVertexArray(0);      
 }
 
+FpsCounter::~FpsCounter()
+{
+    glDeleteProgram(shader_program_);
+    glDeleteVertexArrays(1, &vertex_array_);
+    glDeleteBuffers(1, &vertex_buffer_);
+}
+
 void FpsCounter::update()
 {
     const double weight = 0.1;

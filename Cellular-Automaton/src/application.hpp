@@ -11,11 +11,17 @@ const size_t GRID_DIM_X = 128, GRID_DIM_Y = 128;
 
 class Application
 {
-public:
+  public:
     Application(GLFWwindow *window, AbstractGame *game);
+    Application(const Application&) = delete;
+    Application(Application&&) = default;
+    Application& operator=(const Application&) = delete;
+    Application& operator=(Application&&) = default;
+    ~Application();
+
     int mainloop();
 
-private:
+  private:
     GLFWwindow *window_;
     AbstractGame *game_;
     FpsCounter fps_counter_;

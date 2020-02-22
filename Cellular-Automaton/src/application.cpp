@@ -39,6 +39,12 @@ Application::Application(GLFWwindow *window, AbstractGame *game) :
     glEnableVertexAttribArray(1);
 }
 
+Application::~Application()
+{
+    glDeleteBuffers(1, &vertex_buffer_);
+    glDeleteVertexArrays(1, &vertex_array_);
+}
+
 int Application::mainloop()
 {
     while (!glfwWindowShouldClose(window_)) {

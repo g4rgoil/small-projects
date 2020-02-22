@@ -13,7 +13,13 @@ namespace conway {
 class ConwaysGameGpu: public AbstractGame
 {
   public:
-    ConwaysGameGpu(uint size_x, uint size_y);
+    ConwaysGameGpu(GLsizei size_x, GLsizei size_y);
+    ConwaysGameGpu(const ConwaysGameGpu&) = delete;
+    ConwaysGameGpu(ConwaysGameGpu&&) = default;
+    ConwaysGameGpu& operator=(const ConwaysGameGpu&) = delete;
+    ConwaysGameGpu& operator=(ConwaysGameGpu&&) = default;
+    ~ConwaysGameGpu();
+
     virtual void draw(GLuint vertex_array);
     virtual void nextGeneration();
 

@@ -32,6 +32,11 @@ Renderer::Renderer()
     glUniform1i(glGetUniformLocation(shader_program_, "grid"), 0);
 }
 
+Renderer::~Renderer()
+{
+    glDeleteProgram(shader_program_);
+}
+
 void Renderer::draw(GLuint vertex_array, GLuint texture)
 {
     glUseProgram(shader_program_);

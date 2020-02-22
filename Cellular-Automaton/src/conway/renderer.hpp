@@ -10,6 +10,12 @@ class Renderer
 {
   public:
     Renderer();
+    Renderer(const Renderer&) = delete;
+    Renderer(Renderer&&) = default;
+    Renderer& operator=(const Renderer&) = delete;
+    Renderer& operator=(Renderer&&) = default;
+    ~Renderer();
+
     void draw(GLuint vertex_array, GLuint texture);
     static GLuint createTexture(GLsizei size_x, GLsizei size_y);
 

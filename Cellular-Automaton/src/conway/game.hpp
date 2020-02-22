@@ -18,6 +18,12 @@ class ConwaysGame: public AbstractGame
 {
   public:
     ConwaysGame(uint size_x, uint size_y);
+    ConwaysGame(const ConwaysGame&) = delete;
+    ConwaysGame(ConwaysGame&&) = default;
+    ConwaysGame& operator=(const ConwaysGame&) = delete;
+    ConwaysGame& operator=(ConwaysGame&&) = default;
+    ~ConwaysGame();
+
     virtual void draw(GLuint vertex_array);
     virtual void nextGeneration();
 
@@ -25,8 +31,8 @@ class ConwaysGame: public AbstractGame
     const uint size_x_;
     const uint size_y_;
 
-    ublas::matrix<State> current_grid;
-    ublas::matrix<State> alternate_grid;
+    ublas::matrix<State> current_grid_;
+    ublas::matrix<State> alternate_grid_;
 
     Renderer renderer_;
     uint texture_;

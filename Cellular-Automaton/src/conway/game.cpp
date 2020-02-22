@@ -30,19 +30,24 @@ void generateMatrix(ublas::matrix<T> &matrix, Generator gen)
 
 ConwaysGame::ConwaysGame(uint size_x, uint size_y) :
         size_x_(size_x), size_y_(size_y),
-        current_grid(size_x, size_y),
-        alternate_grid(size_x, size_y),
+        current_grid_(size_x, size_y),
+        alternate_grid_(size_x, size_y),
         renderer_(), is_dirty_(true)
 {
     std::default_random_engine random_engine;
     std::uniform_int_distribution<int> distribution(0, 1);
 
-    generateMatrix(current_grid, [&](){
+    generateMatrix(current_grid_, [&](){
         return distribution(random_engine) ? State::alive : State::dead;});
-    fillMatrix(alternate_grid, State::dead);
+    fillMatrix(alternate_grid_, State::dead);
 
     texture_ = Renderer::createTexture(size_x_, size_y_);
     writeToTexture(texture_);
+}
+
+ConwaysGame::~ConwaysGame()
+{
+    glDeleteTextures(1, &texture_);
 }
 
 void ConwaysGame::draw(GLuint vertex_array)
@@ -59,20 +64,20 @@ void ConwaysGame::writeToTexture(GLuint texture)
 {
     // Flips the image along the x axis (texture origin is bottom left)  ¯\_(ツ)_/¯
     glTextureSubImage2D(texture, 0, 0, 0, size_x_, size_y_,
-        GL_RED, GL_UNSIGNED_BYTE, current_grid.data().begin());
+        GL_RED, GL_UNSIGNED_BYTE, current_grid_.data().begin());
 }
 
 void ConwaysGame::nextGeneration()
 {
-    for (auto itr = alternate_grid.begin1(); itr != alternate_grid.end1(); ++itr) {
+    for (auto itr = alternate_grid_.begin1(); itr != alternate_grid_.end1(); ++itr) {
         for (auto cell = itr.begin(); cell != itr.end(); ++cell) {
             int x = cell.index1(), y = cell.index2();
-            *cell = nextState(current_grid(x, y), countNeighbours(x, y));
+            *cell = nextState(current_grid_(x, y), countNeighbours(x, y));
         }
     }
 
     is_dirty_ = true;
-    std::swap(current_grid, alternate_grid);
+    std::swap(current_grid_, alternate_grid_);
 }
 
 State ConwaysGame::nextState(State state, int neighbours)
@@ -97,7 +102,7 @@ int ConwaysGame::countNeighbours(int x, int y) const
 
             const int xdx = x + dx, ydy = y + dy;
             if (0 <= xdx && xdx < size_x_ && 0 <= ydy && ydy < size_y_) {
-                neighbours += current_grid(xdx, ydy);
+                neighbours += current_grid_(xdx, ydy);
             }
         }
     }

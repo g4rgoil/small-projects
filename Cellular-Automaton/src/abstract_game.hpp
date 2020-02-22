@@ -5,7 +5,7 @@
 
 class AbstractGame
 {
-public:
+  public:
     virtual void draw(GLuint vertex_array) = 0;
     virtual void nextGeneration() = 0;
 };

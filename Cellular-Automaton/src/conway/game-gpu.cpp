@@ -13,19 +13,18 @@
 
 using namespace conway;
 
-ConwaysGameGpu::ConwaysGameGpu(uint size_x, uint size_y) :
-        size_x_(size_x), size_y_(size_y), renderer_()
+ConwaysGameGpu::ConwaysGameGpu(GLsizei size_x, GLsizei size_y) :
+        size_x_(size_x), size_y_(size_y),
+        current_texture_(Renderer::createTexture(size_x, size_y)),
+        alternate_texture_(Renderer::createTexture(size_x, size_y))
 {
-    current_texture_ = Renderer::createTexture(size_x_, size_y_);
-    alternate_texture_ = Renderer::createTexture(size_x_, size_y_);
-
     std::default_random_engine random_engine;
     std::uniform_int_distribution<char> distribution(0, 1);
     std::vector<char> random_data(size_x_ * size_y_);
     std::generate(random_data.begin(), random_data.end(),
                   [&](){return distribution(random_engine);});
     glTextureSubImage2D(current_texture_, 0, 0, 0, size_x_, size_y_,
-        GL_RED, GL_UNSIGNED_BYTE, random_data.data());
+                        GL_RED, GL_UNSIGNED_BYTE, random_data.data());
 
     GLuint compute_shader;
     std::ifstream stream("/home/pascal/repositories/small-projects/Cellular-Automaton/shader/update.glsl");
@@ -38,10 +37,17 @@ ConwaysGameGpu::ConwaysGameGpu(uint size_x, uint size_y) :
     compute_program_ = glCreateProgram();
     glAttachShader(compute_program_, compute_shader);
     if (!LinkProgram(compute_program_)) {
+        glDeleteShader(compute_shader);
         exit(EXIT_FAILURE);
     }
 
-    glDeleteShader(compute_shader);
+}
+
+ConwaysGameGpu::~ConwaysGameGpu()
+{
+    glDeleteTextures(1, &current_texture_);
+    glDeleteTextures(1, &alternate_texture_);
+    glDeleteProgram(compute_program_);
 }
 
 void ConwaysGameGpu::draw(GLuint vertex_array)
