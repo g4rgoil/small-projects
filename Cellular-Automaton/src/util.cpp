@@ -5,10 +5,10 @@
 #include <string>
 #include <iostream>
 
-bool LoadShader(GLuint *shader, GLenum type, const char *source)
+bool LoadShader(GLuint *shader, GLenum type, const char *source, int length)
 {
     *shader = glCreateShader(type);
-    glShaderSource(*shader, 1, &source, NULL);
+    glShaderSource(*shader, 1, &source, &length);
     glCompileShader(*shader);
 
     GLint success = 0;

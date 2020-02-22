@@ -118,10 +118,12 @@ FpsCounter::FpsCounter(uint window_width, uint window_height) :
         LoadCharacters();
 
     GLuint vertex_shader, fragment_shader;
-    if (!LoadShader(&vertex_shader, GL_VERTEX_SHADER, shaders::FontVertexSource.c_str())) {
+    if (!LoadShader(&vertex_shader, GL_VERTEX_SHADER, shaders::FontVertexSource.c_str(),
+                    shaders::FontVertexSource.size())) {
         exit(EXIT_FAILURE);
     }
-    if (!LoadShader(&fragment_shader, GL_FRAGMENT_SHADER, shaders::FontFragmentSource.c_str())) {
+    if (!LoadShader(&fragment_shader, GL_FRAGMENT_SHADER, shaders::FontFragmentSource.c_str(),
+                    shaders::FontFragmentSource.size())) {
         exit(EXIT_FAILURE);
     }
 

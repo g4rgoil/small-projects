@@ -4,12 +4,14 @@
 #include <SFML/Graphics.hpp>
 
 #include "application.hpp"
-#include "conway/conways-game.hpp"
+#include "conway/game.hpp"
+#include "conway/game-gpu.hpp"
 // #include "conway-gpu/conways-game.hpp"
 
 Application::Application(GLFWwindow *window, AbstractGame *game) :
-        window_(window), game_(game), fps_counter_(WINDOW_WIDTH, WINDOW_HEIGHT),
-        framerate_limit_(WINDOW_FRAMERATE), show_hud_(true)
+        window_(window), game_(game),
+        fps_counter_(WINDOW_WIDTH, WINDOW_HEIGHT),
+        show_hud_(true)
 {
     glfwSetWindowUserPointer(window, this);
     glfwSetKeyCallback(window, Application::key_callback);
@@ -97,7 +99,7 @@ int main(int argc, char *argv[])
     // glfwSwapInterval(1);  // enable Vsync
     glfwSwapInterval(0);
 
-    conway::ConwaysGame game(GRID_DIM_X, GRID_DIM_Y);
+    conway::ConwaysGameGpu game(GRID_DIM_X, GRID_DIM_Y);
     Application application(window, &game);
     int exit_code = application.mainloop();
 

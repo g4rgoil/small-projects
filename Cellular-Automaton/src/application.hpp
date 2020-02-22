@@ -6,9 +6,8 @@
 #include "abstract_game.hpp"
 #include "fps_counter.hpp"
 
-const uint WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 1024;
-const uint WINDOW_FRAMERATE = 30;
-const size_t GRID_DIM_X = 128, GRID_DIM_Y = 128;
+const uint WINDOW_WIDTH = 2048, WINDOW_HEIGHT = 2048;
+const size_t GRID_DIM_X = 2048, GRID_DIM_Y = 2048;
 
 class Application
 {
@@ -22,7 +21,6 @@ private:
     FpsCounter fps_counter_;
     uint vertex_buffer_;
     uint vertex_array_;
-    uint framerate_limit_;
     bool show_hud_;
 
     static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
+set(OpenGL_GL_PREFERENCE GLVND)
 
 project(CellularAutomaton)
 
@@ -10,7 +11,9 @@ add_executable( ${EXECUTABLE_NAME}
     src/fps_counter.hpp src/fps_counter.cpp
     src/util.hpp src/util.cpp
     src/abstract_game.hpp src/glad.c
-    src/conway/conways-game.hpp src/conway/conways-game.cpp)
+    src/conway/game.hpp src/conway/game.cpp
+    src/conway/game-gpu.hpp src/conway/game-gpu.cpp
+    src/conway/renderer.hpp src/conway/renderer.cpp)
 
 target_include_directories( ${EXECUTABLE_NAME} PRIVATE include )
 
