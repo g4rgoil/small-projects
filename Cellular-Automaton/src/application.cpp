@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
     glfwSetErrorCallback(error_callback);
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-    // glfwSwapInterval(1);  // enable Vsync
-    glfwSwapInterval(0);
+    glfwSwapInterval(1);  // enable Vsync
+    // glfwSwapInterval(0);
 
     conway::ConwaysGameGpu game(GRID_DIM_X, GRID_DIM_Y);
     Application application(window, &game);

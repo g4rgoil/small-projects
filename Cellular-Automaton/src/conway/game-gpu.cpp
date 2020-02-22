@@ -13,25 +13,11 @@
 
 using namespace conway;
 
-void CreateTexture(GLuint *texture, uint size_x, uint size_y)
-{
-    glGenTextures(1, texture);
-    glBindTexture(GL_TEXTURE_2D, *texture);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R8, size_x, size_y);
-
-    float borderColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);  
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-}
-
 ConwaysGameGpu::ConwaysGameGpu(uint size_x, uint size_y) :
         size_x_(size_x), size_y_(size_y), renderer_()
 {
-    CreateTexture(&current_texture_, size_x_, size_y_);
-    CreateTexture(&alternate_texture_, size_x_, size_y_);
+    current_texture_ = Renderer::createTexture(size_x_, size_y_);
+    alternate_texture_ = Renderer::createTexture(size_x_, size_y_);
 
     std::default_random_engine random_engine;
     std::uniform_int_distribution<char> distribution(0, 1);
@@ -69,7 +55,7 @@ void ConwaysGameGpu::nextGeneration()
     glBindImageTexture(0, current_texture_, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R8I);
     glBindImageTexture(1, alternate_texture_, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R8I);
 
-    glDispatchCompute(size_x_ / 16, size_y_ / 16, 1);
-    // glMemoryBarrier(GL_ALL_BARRIER_BITS);
+    glDispatchCompute(size_x_ / 16, size_y_ / 16, 1);  // TODO calculate properly
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
     std::swap(current_texture_, alternate_texture_);
 }

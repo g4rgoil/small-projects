@@ -6,8 +6,8 @@
 #include "abstract_game.hpp"
 #include "fps_counter.hpp"
 
-const uint WINDOW_WIDTH = 2048, WINDOW_HEIGHT = 2048;
-const size_t GRID_DIM_X = 2048, GRID_DIM_Y = 2048;
+const uint WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 1024;
+const size_t GRID_DIM_X = 128, GRID_DIM_Y = 128;
 
 class Application
 {

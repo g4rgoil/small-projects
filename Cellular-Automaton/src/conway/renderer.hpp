@@ -11,6 +11,8 @@ class Renderer
   public:
     Renderer();
     void draw(GLuint vertex_array, GLuint texture);
+    static GLuint createTexture(GLsizei size_x, GLsizei size_y);
+
 
   private:
     GLuint shader_program_;

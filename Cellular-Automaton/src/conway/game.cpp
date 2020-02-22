@@ -41,18 +41,8 @@ ConwaysGame::ConwaysGame(uint size_x, uint size_y) :
         return distribution(random_engine) ? State::alive : State::dead;});
     fillMatrix(alternate_grid, State::dead);
 
-    glGenTextures(1, &texture_);
-    glBindTexture(GL_TEXTURE_2D, texture_);
-    // Flips the image along the x axis (texture origin is bottom left)  ¯\_(ツ)_/¯
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R8, size_x, size_y_);
+    texture_ = Renderer::createTexture(size_x_, size_y_);
     writeToTexture(texture_);
-
-    float borderColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);  
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 }
 
 void ConwaysGame::draw(GLuint vertex_array)
@@ -67,6 +57,7 @@ void ConwaysGame::draw(GLuint vertex_array)
 
 void ConwaysGame::writeToTexture(GLuint texture)
 {
+    // Flips the image along the x axis (texture origin is bottom left)  ¯\_(ツ)_/¯
     glTextureSubImage2D(texture, 0, 0, 0, size_x_, size_y_,
         GL_RED, GL_UNSIGNED_BYTE, current_grid.data().begin());
 }

@@ -8,6 +8,7 @@ layout(r8i, binding = 1) uniform writeonly iimage2D targetGrid;
 void main() {
     ivec2 coordinate = ivec2(gl_GlobalInvocationID.xy);
 
+    // TODO add guard is exceeding image
     int neighbours = 0;
     for (int dx = -1; dx <= 1; ++dx) {
         for (int dy = -1; dy <= 1; ++dy) {
