@@ -1,8 +1,9 @@
 #ifndef CONWAY_GAME_HPP_INCLUDED
 #define CONWAY_GAME_HPP_INCLUDED
 
-#include <boost/numeric/ublas/matrix.hpp>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
 
 #include "../abstract_game.hpp"
 #include "renderer.hpp"
@@ -24,6 +25,7 @@ class ConwaysGame: public AbstractGame
     ConwaysGame& operator=(ConwaysGame&&) = default;
     ~ConwaysGame();
 
+    virtual glm::uvec2 getSize() const;
     virtual void draw(GLuint vertex_array);
     virtual void nextGeneration();
 

@@ -50,6 +50,11 @@ ConwaysGameGpu::~ConwaysGameGpu()
     glDeleteProgram(compute_program_);
 }
 
+glm::uvec2 ConwaysGameGpu::getSize() const
+{
+    return {size_x_, size_y_};
+}
+
 void ConwaysGameGpu::draw(GLuint vertex_array)
 {
     renderer_.draw(vertex_array, current_texture_);

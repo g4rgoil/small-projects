@@ -50,6 +50,11 @@ ConwaysGame::~ConwaysGame()
     glDeleteTextures(1, &texture_);
 }
 
+glm::uvec2 ConwaysGame::getSize() const
+{
+    return {size_x_, size_y_};
+}
+
 void ConwaysGame::draw(GLuint vertex_array)
 {
     if (is_dirty_) {

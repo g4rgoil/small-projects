@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
 #include "../abstract_game.hpp"
 #include "renderer.hpp"
@@ -20,6 +21,7 @@ class ConwaysGameGpu: public AbstractGame
     ConwaysGameGpu& operator=(ConwaysGameGpu&&) = default;
     ~ConwaysGameGpu();
 
+    virtual glm::uvec2 getSize() const;
     virtual void draw(GLuint vertex_array);
     virtual void nextGeneration();
 
