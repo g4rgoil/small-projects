@@ -7,7 +7,6 @@
 #include "application.hpp"
 #include "conway/game.hpp"
 #include "conway/game-gpu.hpp"
-// #include "conway-gpu/conways-game.hpp"
 
 Application::Application(GLFWwindow *window, AbstractGame *game) :
         window_(window), game_(game),
@@ -107,8 +106,7 @@ int main(int argc, char *argv[])
     glfwSetErrorCallback(error_callback);
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-    glfwSwapInterval(1);  // enable Vsync
-    // glfwSwapInterval(0);
+    glfwSwapInterval(0);  // enable Vsync
 
     glm::mat4 projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f, (float)WINDOW_HEIGHT);
     conway::ConwaysGameGpu game(GRID_DIM_X, GRID_DIM_Y, projection);

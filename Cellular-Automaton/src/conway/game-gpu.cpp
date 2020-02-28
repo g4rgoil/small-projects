@@ -4,12 +4,10 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
-#include <iostream>
-#include <fstream>
-#include <streambuf>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../util.hpp"
+#include "../shaders.hpp"
 
 
 using namespace conway;
@@ -30,9 +28,7 @@ ConwaysGameGpu::ConwaysGameGpu(GLsizei size_x, GLsizei size_y, const glm::mat4 &
                         GL_RED, GL_UNSIGNED_BYTE, random_data.data());
 
     GLuint compute_shader;
-    std::ifstream stream("/home/pascal/repositories/small-projects/Cellular-Automaton/shader/update.glsl");
-    std::string source((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
-
+    const std::string &source = shaders::ConwayUpdateSource;
     if (!LoadShader(&compute_shader, GL_COMPUTE_SHADER, source.c_str(), source.size())) {
         exit(EXIT_FAILURE);
     }

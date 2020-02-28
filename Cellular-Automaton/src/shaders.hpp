@@ -21,6 +21,7 @@ const std::string ConwayVertexSource =
     "    texCoord = vec2(texProjection * vec4(texCoord_in, 0.0, 1.0));  \n"
     "}                                                                  ";
 
+
 const std::string ConwayFragmentSource =
     "#version 330 core                                                \n"
     "                                                                 \n"
@@ -35,6 +36,44 @@ const std::string ConwayFragmentSource =
     "}                                                                ";
 
 
+const std::string ConwayUpdateSource = 
+    "#version 430 core                                                                   \n"
+    "                                                                                    \n"
+    "layout(local_size_x = 16, local_size_y = 16) in;                                    \n"
+    "                                                                                    \n"
+    "layout(r8i, binding = 0) uniform readonly iimage2D sourceGrid;                      \n"
+    "layout(r8i, binding = 1) uniform writeonly iimage2D targetGrid;                     \n"
+    "                                                                                    \n"
+    "void countNeighbours(const in ivec2 coordinate, out int neighbours) {               \n"
+    "    for (int dx = -1; dx <= 1; ++dx) {                                              \n"
+    "        for (int dy = -1; dy <= 1; ++dy) {                                          \n"
+    "            if (dx != 0 || dy != 0) {                                               \n"
+    "                neighbours += imageLoad(sourceGrid, coordinate + ivec2(dx, dy)).x;  \n"
+    "            }                                                                       \n"
+    "        }                                                                           \n"
+    "    }                                                                               \n"
+    "}                                                                                   \n"
+    "                                                                                    \n"
+    "void writeNewState(const in ivec2 coordinate, const in int neighbours) {            \n"
+    "    if (neighbours == 3) {                                                          \n"
+    "        imageStore(targetGrid, coordinate, ivec4(1));                               \n"
+    "    } else if (neighbours == 2 && imageLoad(sourceGrid, coordinate).x == 1) {       \n"
+    "        imageStore(targetGrid, coordinate, ivec4(1));                               \n"
+    "    } else {                                                                        \n"
+    "        imageStore(targetGrid, coordinate, ivec4(0));                               \n"
+    "    }                                                                               \n"
+    "}                                                                                   \n"
+    "                                                                                    \n"
+    "void main() {                                                                       \n"
+    "    ivec2 coordinate = ivec2(gl_GlobalInvocationID.xy);                             \n"
+    "                                                                                    \n"
+    "    int neighbours = 0;                                                             \n"
+    "    countNeighbours(coordinate, neighbours);                                        \n"
+    "    writeNewState(coordinate, neighbours);                                          \n"
+    "}                                                                                   ";
+
+
+
 const std::string FontVertexSource =
     "#version 330 core                                          \n"
     "layout (location = 0) in vec4 vertex;                      \n"
@@ -47,6 +86,7 @@ const std::string FontVertexSource =
     "    gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);  \n"
     "    TexCoords = vertex.zw;                                 \n"
     "}                                                          ";
+
 
 const std::string FontFragmentSource =
     "#version 330 core                                                    \n"
