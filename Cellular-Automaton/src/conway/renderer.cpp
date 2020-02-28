@@ -1,12 +1,17 @@
 #include "renderer.hpp"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <iostream>
+
 #include "../shaders.hpp"
 #include "../util.hpp"
 
 
 using namespace conway;
 
-Renderer::Renderer()
+Renderer::Renderer(const glm::mat4 &coord_projection, const glm::mat4 &texture_projection)
 {
     GLuint vertex_shader, fragment_shader;
     if (!LoadShader(&vertex_shader, GL_VERTEX_SHADER, shaders::ConwayVertexSource.c_str(),
@@ -30,6 +35,10 @@ Renderer::Renderer()
 
     glUseProgram(shader_program_);
     glUniform1i(glGetUniformLocation(shader_program_, "grid"), 0);
+    glUniformMatrix4fv(glGetUniformLocation(shader_program_, "projection"),
+                       1, GL_FALSE, &coord_projection[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(shader_program_, "texProjection"),
+                       1, GL_FALSE, &texture_projection[0][0]);
 }
 
 Renderer::~Renderer()

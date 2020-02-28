@@ -14,16 +14,16 @@ namespace conway {
 class ConwaysGameGpu: public AbstractGame
 {
   public:
-    ConwaysGameGpu(GLsizei size_x, GLsizei size_y);
+    ConwaysGameGpu(GLsizei size_x, GLsizei size_y, const glm::mat4 &projection);
     ConwaysGameGpu(const ConwaysGameGpu&) = delete;
     ConwaysGameGpu(ConwaysGameGpu&&) = default;
     ConwaysGameGpu& operator=(const ConwaysGameGpu&) = delete;
     ConwaysGameGpu& operator=(ConwaysGameGpu&&) = default;
     ~ConwaysGameGpu();
 
-    virtual glm::uvec2 getSize() const;
-    virtual void draw(GLuint vertex_array);
-    virtual void nextGeneration();
+    glm::uvec2 getSize() const;
+    void draw(GLuint vertex_array);
+    void nextGeneration();
 
   private:
     const uint size_x_;

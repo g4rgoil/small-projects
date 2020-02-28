@@ -6,30 +6,33 @@
 namespace shaders {
 
 const std::string ConwayVertexSource = 
-    "#version 330 core                              \n"
-    "                                               \n"
-    "layout (location = 0) in vec2 position;        \n"
-    "layout (location = 1) in vec2 texCoord_in;     \n"
-    "                                               \n"
-    "out vec2 texCoord;                             \n"
-    "                                               \n"
-    "void main() {                                  \n"
-    "    gl_Position = vec4(position, 0.0, 1.0);    \n"
-    "    texCoord = texCoord_in;                    \n"
-    "}                                              ";
+    "#version 330 core                                                  \n"
+    "                                                                   \n"
+    "layout (location = 0) in vec2 position;                            \n"
+    "layout (location = 1) in vec2 texCoord_in;                         \n"
+    "                                                                   \n"
+    "out vec2 texCoord;                                                 \n"
+    "                                                                   \n"
+    "uniform mat4 projection;                                           \n"
+    "uniform mat4 texProjection;                                        \n"
+    "                                                                   \n"
+    "void main() {                                                      \n"
+    "    gl_Position = projection * vec4(position, 0.0, 1.0);           \n"
+    "    texCoord = vec2(texProjection * vec4(texCoord_in, 0.0, 1.0));  \n"
+    "}                                                                  ";
 
 const std::string ConwayFragmentSource =
-    "#version 330 core                                              \n"
-    "                                                               \n"
-    "uniform isampler2D grid;                                       \n"
-    "                                                               \n"
-    "in vec2 texCoord;                                              \n"
-    "                                                               \n"
-    "out vec4 fragColor;                                            \n"
-    "                                                               \n"
-    "void main() {                                                  \n"
-    "fragColor = vec4(vec3(1 - texture(grid, texCoord).r), 1.0);    \n"
-    "}                                                              ";
+    "#version 330 core                                                \n"
+    "                                                                 \n"
+    "in vec2 texCoord;                                                \n"
+    "                                                                 \n"
+    "out vec4 fragColor;                                              \n"
+    "                                                                 \n"
+    "uniform isampler2D grid;                                         \n"
+    "                                                                 \n"
+    "void main() {                                                    \n"
+    "    fragColor = vec4(vec3(1 - texture(grid, texCoord).r), 1.0);  \n"
+    "}                                                                ";
 
 
 const std::string FontVertexSource =

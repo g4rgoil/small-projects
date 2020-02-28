@@ -1,7 +1,8 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <SFML/Graphics.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "application.hpp"
 #include "conway/game.hpp"
@@ -16,14 +17,18 @@ Application::Application(GLFWwindow *window, AbstractGame *game) :
     glfwSetWindowUserPointer(window, this);
     glfwSetKeyCallback(window, Application::key_callback);
 
-    float vertices[] = {
-        -1.0f,  1.0f, 0.0f, 1.0f,   // top left
-        -1.0f, -1.0f, 0.0f, 0.0f,   // bottom left
-         1.0f,  1.0f, 1.0f, 1.0f,   // top right
+    int window_width, window_height;
+    glfwGetWindowSize(window, &window_width, &window_height);
+    glm::uvec2 game_size = game->getSize();
 
-         1.0f,  1.0f, 1.0f, 1.0f,   // top right
-        -1.0f, -1.0f, 0.0f, 0.0f,   // bottom left
-         1.0f, -1.0f, 1.0f, 0.0f,   // bottom right
+    float vertices[] = {
+        0.0f,                0.0f,                  0.0f,               0.0f,                // bottom left
+        (float)window_width, (float)window_height,  (float)game_size.x, (float)game_size.y,  // top right
+        0.0f,                (float)window_height,  0.0f,               (float)game_size.y,  // top left
+
+        (float)window_width, (float)window_height,  (float)game_size.x, (float)game_size.y,  // top right
+        0.0f,                0.0f,                  0.0f,               0.0f,                // bottom left
+        (float)window_width, 0.0f,                  (float)game_size.x, 0.0f                 // bottom right
     };
 
     glGenVertexArrays(1, &vertex_array_);
@@ -105,7 +110,8 @@ int main(int argc, char *argv[])
     glfwSwapInterval(1);  // enable Vsync
     // glfwSwapInterval(0);
 
-    conway::ConwaysGameGpu game(GRID_DIM_X, GRID_DIM_Y);
+    glm::mat4 projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f, (float)WINDOW_HEIGHT);
+    conway::ConwaysGameGpu game(GRID_DIM_X, GRID_DIM_Y, projection);
     Application application(window, &game);
     int exit_code = application.mainloop();
 

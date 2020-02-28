@@ -4,7 +4,7 @@
 #include <random>
 #include <iostream>
 #include <boost/numeric/ublas/io.hpp>
-#include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "../util.hpp"
 #include "../shaders.hpp"
@@ -28,11 +28,13 @@ void generateMatrix(ublas::matrix<T> &matrix, Generator gen)
     }
 }
 
-ConwaysGame::ConwaysGame(uint size_x, uint size_y) :
+ConwaysGame::ConwaysGame(uint size_x, uint size_y, const glm::mat4 &projection) :
         size_x_(size_x), size_y_(size_y),
         current_grid_(size_x, size_y),
         alternate_grid_(size_x, size_y),
-        renderer_(), is_dirty_(true)
+        renderer_(projection, glm::scale(glm::mat4(1.0f), 
+                  glm::vec3(1/(float)size_x, 1/(float)size_y, 0.0f))),
+        is_dirty_(true)
 {
     std::default_random_engine random_engine;
     std::uniform_int_distribution<int> distribution(0, 1);

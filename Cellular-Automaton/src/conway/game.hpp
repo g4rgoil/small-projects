@@ -18,16 +18,16 @@ enum State : char {dead = 0, alive = 1};
 class ConwaysGame: public AbstractGame
 {
   public:
-    ConwaysGame(uint size_x, uint size_y);
+    ConwaysGame(uint size_x, uint size_y, const glm::mat4 &projection);
     ConwaysGame(const ConwaysGame&) = delete;
     ConwaysGame(ConwaysGame&&) = default;
     ConwaysGame& operator=(const ConwaysGame&) = delete;
     ConwaysGame& operator=(ConwaysGame&&) = default;
     ~ConwaysGame();
 
-    virtual glm::uvec2 getSize() const;
-    virtual void draw(GLuint vertex_array);
-    virtual void nextGeneration();
+    glm::uvec2 getSize() const;
+    void draw(GLuint vertex_array);
+    void nextGeneration();
 
   private:
     const uint size_x_;
