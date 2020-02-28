@@ -26,12 +26,6 @@ target_link_libraries( ${EXECUTABLE_NAME} ${OPENGL_LIBRARIES} )
 find_package( glfw3 3.3 REQUIRED )
 target_link_libraries( ${EXECUTABLE_NAME} glfw )
 
-find_package( SFML REQUIRED COMPONENTS graphics window system )
-set( SFML_STATIC_LIBRARIES TRUE )
-
 find_package( Freetype REQUIRED )
 target_link_libraries( ${EXECUTABLE_NAME} ${FREETYPE_LIBRARIES} )
 target_include_directories( ${EXECUTABLE_NAME} PRIVATE ${FREETYPE_INCLUDE_DIRS})
-
-include_directories( ${SFML_INCLUDE_DIR} )
-target_link_libraries( ${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES} )

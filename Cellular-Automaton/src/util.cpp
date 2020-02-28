@@ -21,7 +21,6 @@ bool LoadShader(GLuint *shader, GLenum type, const char *source, int length)
         std::vector<GLchar> errorLog(maxLength);
         glGetShaderInfoLog(*shader, maxLength, &maxLength, &errorLog[0]);
 
-        // std::string log(errorLog.begin(), errorLog.end());
         std::cout << std::string(errorLog.begin(), errorLog.end()) << std::endl;
         glDeleteShader(*shader);
 
