@@ -85,6 +85,7 @@ void Application::key_callback(int key, int scancode, int action, int mods)
 
 void error_callback(int error, const char *description)
 {
+    std::cout << "Error occurred in GLFW window, error_code=" << error << std::endl;
     std::cout << description << std::endl;
 }
 
@@ -129,5 +130,5 @@ int main(int argc, char *argv[])
 
     int exit_code = application.mainloop();
     glfwTerminate();
-    return exit_code;
+    return EXIT_SUCCESS;
 }

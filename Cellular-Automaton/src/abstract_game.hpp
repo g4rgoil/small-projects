@@ -7,6 +7,8 @@
 class AbstractGame
 {
   public:
+    virtual ~AbstractGame() {};
+
     virtual glm::uvec2 getSize() const = 0;
     virtual void draw(GLuint vertex_array) = 0;
     virtual void nextGeneration() = 0;
