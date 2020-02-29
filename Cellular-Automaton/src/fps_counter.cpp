@@ -112,30 +112,11 @@ void RenderText(GLuint program, GLuint vertex_array, GLuint vertex_buffer,
 
 FpsCounter::FpsCounter(uint window_width, uint window_height) :
         current_fps_(0.0), last_update_time_(glfwGetTime()),
-        window_width_(window_width), window_height_(window_height)
+        window_width_(window_width), window_height_(window_height),
+        shader_program_(CreateProgram(shaders::FontVertexSource, shaders::FontFragmentSource))
 {
     if (Characters.empty())
         LoadCharacters();
-
-    GLuint vertex_shader, fragment_shader;
-    if (!LoadShader(&vertex_shader, GL_VERTEX_SHADER, shaders::FontVertexSource.c_str(),
-                    shaders::FontVertexSource.size())) {
-        exit(EXIT_FAILURE);
-    }
-    if (!LoadShader(&fragment_shader, GL_FRAGMENT_SHADER, shaders::FontFragmentSource.c_str(),
-                    shaders::FontFragmentSource.size())) {
-        exit(EXIT_FAILURE);
-    }
-
-    shader_program_ = glCreateProgram();
-    glAttachShader(shader_program_, vertex_shader);
-    glAttachShader(shader_program_, fragment_shader);
-    if (!LinkProgram(shader_program_)) {
-        exit(EXIT_FAILURE);
-    }
-
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
 
     glUseProgram(shader_program_);
     glm::mat4 projection = glm::ortho(0.0f, (float)window_width, 0.0f, (float)window_height);

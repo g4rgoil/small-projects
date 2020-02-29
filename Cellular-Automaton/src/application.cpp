@@ -1,10 +1,13 @@
 #include <iostream>
+#include <exception>
+#include <memory>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "application.hpp"
+#include "exceptions.hpp"
 #include "conway/game.hpp"
 #include "conway/game-gpu.hpp"
 
@@ -56,9 +59,7 @@ int Application::mainloop()
 
         game_->draw(vertex_array_);
 
-        if (show_hud_) {
-            fps_counter_.draw();
-        }
+        if (show_hud_) fps_counter_.draw();
 
         game_->nextGeneration();
         fps_counter_.update();
@@ -94,6 +95,9 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
+    // Only needed for uncaught exceptions (or simillar situtations)
+    std::set_terminate([]() { glfwTerminate(); });
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -106,13 +110,24 @@ int main(int argc, char *argv[])
     glfwSetErrorCallback(error_callback);
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-    glfwSwapInterval(0);  // enable Vsync
+    glfwSwapInterval(1);  // enable Vsync
 
     glm::mat4 projection = glm::ortho(0.0f, (float)WINDOW_WIDTH, 0.0f, (float)WINDOW_HEIGHT);
-    conway::ConwaysGameGpu game(GRID_DIM_X, GRID_DIM_Y, projection);
-    Application application(window, &game);
-    int exit_code = application.mainloop();
+    std::unique_ptr<AbstractGame> game;
 
+    try {
+        game = std::make_unique<conway::ConwaysGameGpu>(GRID_DIM_X, GRID_DIM_Y, projection);
+    } catch (const OpenGlError &e) {
+        std::cout << "OpenGL caused an exception:" << std::endl;
+        std::cout << e.what() << std::endl;
+
+        glfwTerminate();
+        return EXIT_FAILURE;
+    }
+
+    Application application(window, game.get());
+
+    int exit_code = application.mainloop();
     glfwTerminate();
     return exit_code;
 }

@@ -3,6 +3,7 @@
 
 #include <string>
 
+
 namespace shaders {
 
 const std::string ConwayVertexSource = 

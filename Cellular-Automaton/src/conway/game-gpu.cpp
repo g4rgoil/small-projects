@@ -16,6 +16,7 @@ ConwaysGameGpu::ConwaysGameGpu(GLsizei size_x, GLsizei size_y, const glm::mat4 &
         size_x_(size_x), size_y_(size_y),
         current_texture_(Renderer::createTexture(size_x, size_y)),
         alternate_texture_(Renderer::createTexture(size_x, size_y)),
+        compute_program_(CreateProgram(GL_COMPUTE_SHADER, shaders::ConwayUpdateSource)),
         renderer_(projection, glm::scale(glm::mat4(1.0f), 
                   {1 / (float)size_x, 1 / (float)size_y, 0.0f}))
 {
@@ -26,19 +27,6 @@ ConwaysGameGpu::ConwaysGameGpu(GLsizei size_x, GLsizei size_y, const glm::mat4 &
                   [&](){return distribution(random_engine);});
     glTextureSubImage2D(current_texture_, 0, 0, 0, size_x_, size_y_,
                         GL_RED, GL_UNSIGNED_BYTE, random_data.data());
-
-    GLuint compute_shader;
-    const std::string &source = shaders::ConwayUpdateSource;
-    if (!LoadShader(&compute_shader, GL_COMPUTE_SHADER, source.c_str(), source.size())) {
-        exit(EXIT_FAILURE);
-    }
-
-    compute_program_ = glCreateProgram();
-    glAttachShader(compute_program_, compute_shader);
-    if (!LinkProgram(compute_program_)) {
-        glDeleteShader(compute_shader);
-        exit(EXIT_FAILURE);
-    }
 }
 
 ConwaysGameGpu::~ConwaysGameGpu()
@@ -65,6 +53,7 @@ void ConwaysGameGpu::nextGeneration()
     glBindImageTexture(1, alternate_texture_, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R8I);
 
     glDispatchCompute(std::ceil(size_x_ / 16.0f), std::ceil(size_y_ / 16.0f), 1);
-    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
+    // glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
     std::swap(current_texture_, alternate_texture_);
 }

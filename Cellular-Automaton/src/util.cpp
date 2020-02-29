@@ -1,36 +1,62 @@
 #include "util.hpp"
 
-#include <glad/glad.h>
 #include <vector>
-#include <string>
-#include <iostream>
 
-bool LoadShader(GLuint *shader, GLenum type, const char *source, int length)
+#include "exceptions.hpp"
+
+
+GLuint CreateProgram(GLenum type, const std::string &shader_src)
 {
-    *shader = glCreateShader(type);
-    glShaderSource(*shader, 1, &source, &length);
-    glCompileShader(*shader);
+    GLuint shader = CreateShader(type, shader_src.c_str(), shader_src.size());
+    GLuint program = glCreateProgram();
+
+    glAttachShader(program, shader);
+    LinkProgram(program);
+    glDeleteShader(shader);
+
+    return program;
+}
+
+GLuint CreateProgram(const std::string &vertex_src, const std::string &fragment_src)
+{
+    GLuint vertex_shader = CreateShader(GL_VERTEX_SHADER, vertex_src.c_str(), vertex_src.size());
+    GLuint fragment_shader = CreateShader(GL_FRAGMENT_SHADER, fragment_src.c_str(), fragment_src.size());
+    GLuint program = glCreateProgram();
+
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
+    LinkProgram(program);
+
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+
+    return program;
+}
+
+GLuint CreateShader(GLenum type, const char *source, int length)
+{
+    GLuint shader = glCreateShader(type);
+    glShaderSource(shader, 1, &source, &length);
+    glCompileShader(shader);
 
     GLint success = 0;
-    glGetShaderiv(*shader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 
     if (success == GL_FALSE) {
         GLint maxLength = 0;
-        glGetShaderiv(*shader, GL_INFO_LOG_LENGTH, &maxLength);
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
         std::vector<GLchar> errorLog(maxLength);
-        glGetShaderInfoLog(*shader, maxLength, &maxLength, &errorLog[0]);
+        glGetShaderInfoLog(shader, maxLength, &maxLength, &errorLog[0]);
 
-        std::cout << std::string(errorLog.begin(), errorLog.end()) << std::endl;
-        glDeleteShader(*shader);
-
-        return false;
+        glDeleteShader(shader);
+        throw OpenGlError(std::string(errorLog.begin(), errorLog.end()));
     }
 
-    return true;
+    return shader;
 }
 
-bool LinkProgram(GLuint program)
+void LinkProgram(GLuint program)
 {
     glLinkProgram(program);
 
@@ -44,11 +70,7 @@ bool LinkProgram(GLuint program)
         std::vector<GLchar> errorLog(maxLength);
         glGetProgramInfoLog(program, maxLength, &maxLength, &errorLog[0]);
 
-        std::cout << std::string(errorLog.begin(), errorLog.end()) << std::endl;
         glDeleteProgram(program);
-
-        return false;
+        throw OpenGlError(std::string(errorLog.begin(), errorLog.end()));
     }
-
-    return true;
 }
