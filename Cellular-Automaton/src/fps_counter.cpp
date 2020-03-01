@@ -90,12 +90,12 @@ void RenderText(GLuint program, GLuint vertex_array, GLuint vertex_buffer,
         GLfloat h = ch.size.y * scale;
 
         GLfloat vertices[] = {
-            xpos,     ypos + h,   0.0, 0.0,
-            xpos,     ypos,       0.0, 1.0,
-            xpos + w, ypos,       1.0, 1.0,
-            xpos,     ypos + h,   0.0, 0.0,
-            xpos + w, ypos,       1.0, 1.0,
-            xpos + w, ypos + h,   1.0, 0.0           
+            xpos,     ypos + h,  0.0, 0.0,
+            xpos,     ypos,      0.0, 1.0,
+            xpos + w, ypos,      1.0, 1.0,
+            xpos,     ypos + h,  0.0, 0.0,
+            xpos + w, ypos,      1.0, 1.0,
+            xpos + w, ypos + h,  1.0, 0.0
         };
 
         glBindTexture(GL_TEXTURE_2D, ch.textureID);
