@@ -7,6 +7,7 @@
 
 #include "abstract_game.hpp"
 #include "fps_counter.hpp"
+#include "fps_limiter.hpp"
 #include "view_port.hpp"
 
 
@@ -31,6 +32,7 @@ class Application
     GLFWwindow *window_;
     AbstractGame *game_;
     FpsCounter fps_counter_;
+    FpsLimiter fps_limiter_;
     ViewPort view_port_;
 
     uint vertex_buffer_;

@@ -9,6 +9,7 @@ set(EXECUTABLE_NAME "cellular-automaton")
 add_executable( ${EXECUTABLE_NAME}
     src/application.hpp src/application.cpp
     src/fps_counter.hpp src/fps_counter.cpp
+    src/fps_limiter.hpp src/fps_limiter.cpp
     src/view_port.hpp src/view_port.cpp
     src/util.hpp src/util.cpp
     src/abstract_game.hpp src/glad.c
