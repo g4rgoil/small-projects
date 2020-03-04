@@ -49,11 +49,11 @@ void ConwaysGameGpu::draw(GLuint vertex_array)
 void ConwaysGameGpu::nextGeneration()
 {
     glUseProgram(compute_program_);
-    glBindImageTexture(0, current_texture_, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R8I);
-    glBindImageTexture(1, alternate_texture_, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R8I);
+    glBindImageTexture(0, current_texture_, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R8I);
+    glBindImageTexture(1, alternate_texture_, 0, GL_FALSE, 0, GL_READ_WRITE, GL_R8I);
 
     glDispatchCompute(std::ceil(size_x_ / 16.0f), std::ceil(size_y_ / 16.0f), 1);
-    // glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
-    glMemoryBarrier(GL_ALL_BARRIER_BITS);
+    // glMemoryBarrier(GL_ALL_BARRIER_BITS);
+    glMemoryBarrier(GL_TEXTURE_UPDATE_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
     std::swap(current_texture_, alternate_texture_);
 }
